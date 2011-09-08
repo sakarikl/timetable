@@ -1,0 +1,79 @@
+@CHARSET "UTF-8";
+@PAGE landscape {size: landscape;}
+
+.week {
+  width:100%;
+  height:390px;
+  border: 0;
+  page-break-after: always;
+  page: landscape;
+}
+
+.day, .times {
+  height: 346px;
+}
+
+.week_header {
+  color: red;
+  border: 1px solid black;
+  height: 25px;
+  width: 99%;
+  background-color:#dddddd;
+  padding-right:4px;
+}
+
+.week_header_content {
+  padding-left: 40px;
+  float:left;
+  width:50%;
+}
+
+.day, .times {
+  border-right: 1px solid black;
+}
+
+
+.day {
+  float: left;
+  width: 19%;
+}
+
+.day_title {
+  padding-left: 20px;
+  font-weight: bold;
+  border-bottom: 1px solid black;
+}
+
+.times {
+  float: left;
+  width: 4%;
+  text-align: center;
+  border-left: 1px solid black;
+}
+
+.times_hour, .subject{
+  height: 24px;
+}
+.times_hour, .subject {
+  border-bottom: 1px solid black;
+}
+
+.subject, .subject_continues{
+  font-size: 10px;
+}
+
+.subject_continues {
+  height: 25px;
+}
+
+.empty {
+  background-color:#dddddd;
+}
+
+.red {
+  color: red;
+}
+
+.second {
+
+}
