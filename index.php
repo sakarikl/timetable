@@ -17,7 +17,7 @@ foreach ($data as $line)
 
   foreach ($discard_lines_regexp as $regexp)
   {
-    if (preg_match($regexp, $line)) continue;
+    if (preg_match($regexp, $line)) continue 2;
   }
 
   if (!preg_match('{([^0-9\.]*)([0-9\.]*).*?(([0-9]+)\.([0-9]+))-(([0-9]+)\.([0-9]+))(.*)}', $line, $times))
