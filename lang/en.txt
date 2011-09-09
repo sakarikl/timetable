@@ -1,0 +1,14 @@
+
+week = 'WEEK'
+
+monday_short = 'Mon'
+tuesday_short = 'Tue'
+wednesday_short = 'Wed'
+thursday_short = 'Thu'
+friday_short = 'Fri'
+saturday_short = 'Sat'
+sunday_short = 'Sun'
+
+wrong_input_line = 'INPUT LINE INCORRECT'
+
+date_format = 'n/j'

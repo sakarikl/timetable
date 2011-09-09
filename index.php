@@ -1,10 +1,8 @@
-<html>
-<head>
-<title>Timetable</title>
-<link href="style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
 <?php
+
+require 'config.php';
+
+echo_header();
 
 $data = file('data.txt');
 
@@ -17,9 +15,10 @@ foreach ($data as $line)
   $line = trim($line);
   if (!$line) continue;
 
-  if (preg_match('{PVM.*KLO.*PAIKKA}', $line)) continue;
-  if (preg_match('{^Ajoitus:$}', $line)) continue;
-  if (preg_match('{^([0-9]+\.)?[0-9]+\.([0-9]+)?[ -]+[0-9]+\.[0-9]+\.[0-9]+$}', $line)) continue;
+  foreach ($discard_lines_regexp as $regexp)
+  {
+    if (preg_match($regexp, $line)) continue;
+  }
 
   if (!preg_match('{([^0-9\.]*)([0-9\.]*).*?(([0-9]+)\.([0-9]+))-(([0-9]+)\.([0-9]+))(.*)}', $line, $times))
   {
@@ -38,7 +37,7 @@ foreach ($data as $line)
 
   if (!$start)
   {
-    echo '<b>VIRHEELINEN RIVI: '.$times[0].'</b><br />';
+    echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
     continue;
   }
 
@@ -63,12 +62,12 @@ foreach ($lectures as $year => $weeks)
   {
     if (!isset($weeks[$week])) continue;
 
-    $week_dates = get_week_dates($week, $year);
-    echo "\n".'<div id="year_'.$year.'_'.$week.'" class="week"><div class="week_header"><div class="week_header_content">'.$year.' VIIKKO <strong>'.$week.'</strong> '.$week_dates[1].' - '.$week_dates[7].'</div></div>'.$times_div;
+    $week_dates = $l->getWeekDates($week, $year);
+    echo "\n".'<div id="year_'.$year.'_'.$week.'" class="week"><div class="week_header"><div class="week_header_content">'.$year.' '.$l->week.' <strong>'.$week.'</strong> '.$week_dates[1].' - '.$week_dates[7].'</div></div>'.$times_div;
 
     for ($day=1; $day<6; $day++)
     {
-      echo "\n".'<div class="day"><div class="day_title">'.get_day($day).' '.$week_dates[$day].'</div>';
+      echo "\n".'<div class="day"><div class="day_title">'.$l->getDay($day).' '.$week_dates[$day].'</div>';
       $reserved_space = $next_ending = $dashed = $extra_slots = -1;
       $red = false;
       foreach ($hours_range as $hour)
@@ -137,83 +136,3 @@ foreach ($lectures as $year => $weeks)
     echo "\n".'</div><br style="clear:both;"/>';
   }
 }
-
-/**
- * get class for hour slot
- *
- * @param int $reserved_space
- * @param bool $red
- * @param int $next_ending
- * @param bool $subject
- * @param int $extra_slots
- * @return string
- */
-function get_class_for_hour_slot($reserved_space, &$red, $next_ending, $subject = false, $extra_slots = false)
-{
-  static $last_red = false;
-
-  $red = ($red && $reserved_space >= 0);
-
-  $class = ($reserved_space >= 0 || $subject) ? (($reserved_space > 0) ? 'subject_continues' : 'subject') : 'subject empty';
-
-  $class .= $red ? ' red' : '';
-
-  $class .= ($red && $next_ending == 0 && $reserved_space > 0) ? ' dashed' : '';
-
-  $class .= ($last_red && $red && $extra_slots !== false) ? ' dashed_top' : '';
-
-  $last_red = $red;
-
-  return $class;
-}
-
-/**
- * get current day as text
- *
- * @param int $day
- * @return string
- */
-function get_day($day)
-{
-  switch ($day)
-  {
-    case 0 :
-      return 'Su';
-    case 1 :
-      return 'Ma';
-    case 2 :
-      return 'Ti';
-    case 3 :
-      return 'Ke';
-    case 4 :
-      return 'To';
-    case 5 :
-      return 'Pe';
-    case 6 :
-      return 'La';
-    default:
-      return 'Undefined';
-  }
-}
-
-/**
- * get week dates
- *
- * @param int $week
- * @param int $year
- * @return array
- */
-function get_week_dates($week, $year)
-{
-  $time = strtotime($year . '0104 +' . ($week - 1) . ' weeks');
-  $monday = strtotime('-' . (date('w', $time) - 1) . ' days', $time);
-
-  $times = array();
-  for ($i=0; $i<7; ++$i) $times[$i+1] = date('j.n', strtotime('+'.$i.' days', $monday));
-
-  return $times;
-}
-
-?>
-</body>
-</html>

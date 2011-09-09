@@ -1,0 +1,14 @@
+
+week = 'VIIKKO'
+
+monday_short = 'Ma'
+tuesday_short = 'Ti'
+wednesday_short = 'Ke'
+thursday_short = 'To'
+friday_short = 'Pe'
+saturday_short = 'Pe'
+sunday_short = 'Pe'
+
+wrong_input_line = 'VIRHEELINEN RIVI'
+
+date_format = 'j.n'
