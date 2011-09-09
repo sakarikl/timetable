@@ -69,36 +69,65 @@ foreach ($lectures as $year => $weeks)
     for ($day=1; $day<6; $day++)
     {
       echo "\n".'<div class="day"><div class="day_title">'.get_day($day).' '.$week_dates[$day].'</div>';
-      $next_reserved = 0;
+      $reserved_space = $next_ending = $dashed = $extra_slots = -1;
+      $red = false;
       foreach ($hours_range as $hour)
       {
         if (!isset($weeks[$week][$day][$hour]))
         {
-          $class = ($next_reserved > 0) ? (($next_reserved > 1) ? 'subject_continues' : 'subject') : 'subject empty';
-          $next_reserved--;
-          echo "\n".'<div class="'.$class.'">&nbsp;</div>';
+          $extra_slots--;
+          echo "\n".'<div class="'.get_class_for_hour_slot($reserved_space--, $red, $next_ending--).'">&nbsp;</div>';
           continue;
         }
+        $count = 0;
 
         foreach ($weeks[$week][$day][$hour] as $minute => $subjects)
         {
-          $red = (count($subjects) > 1) ? ' red' : '';
-          $once = false;
+          $red = (count($subjects) > 1 || $reserved_space > 0);
+
           foreach ($subjects as $subject => $item)
           {
-            if (!$once)
+            if (!$count)
             {
-              $next_reserved = floor($item['length']/3601);
-              $class = ($next_reserved) ? 'subject_continues' : 'subject';
-              echo "\n".'<div class="'.$class.$red.'">';
+              //counts needed space for item
+              $extra_slots = (int)floor($item['length']/3601);
+              $reserved_space = max($extra_slots, $reserved_space);
+              $next_ending = min($extra_slots, $reserved_space);
+
+              if (count($weeks[$week][$day][$hour]) > 1) $red = true;
+
+              if (!$red)
+              {
+                for ($i=1; $i<$extra_slots; $i++)
+                {
+                  if (isset($weeks[$week][$day][$hour+$i]))
+                  {
+                    $red = true;
+                    continue;
+                  }
+                }
+              }
+              echo "\n".'<div class="'.get_class_for_hour_slot($reserved_space--, $red, $next_ending--, true, $extra_slots--).'">';
             }
-            else echo "\n".'<div class="red second">';
+            else
+            {
+              // more than one item starting at the same time (tested only with two concurrent items)
+              //calculations must be done again
 
-            echo $hour.'.'.$minute.' - '.$item['h'].'.'.$item['m'].' '.$subject.'<br /><strong>'.$item['info'].'</strong>';
+              $tmp = (int)floor($item['length']/3601);
 
-            if ($once) echo "\n".'</div>';
+              //+1 because previous loop used -- already
+              $tmp_extra_slots = max($tmp, $extra_slots+1);
+              $tmp_reserved_space = max($tmp_extra_slots, $reserved_space+1);
+              $tmp_next_ending = min($tmp, max($extra_slots+1, $reserved_space+1));
 
-            $once = true;
+              //-- to match previous loop
+              $extra_slots = --$tmp_extra_slots;
+              $next_ending = --$tmp_next_ending;
+              $reserved_space = --$tmp_reserved_space;
+            }
+            echo $hour.'.'.$minute.' - '.$item['h'].'.'.$item['m'].' '.$subject.'<br /><strong>'.$item['info'].'</strong><br />';
+            $count++;
           }
         }
         echo "\n".'</div>';
@@ -107,6 +136,35 @@ foreach ($lectures as $year => $weeks)
     }
     echo "\n".'</div><br style="clear:both;"/>';
   }
+}
+
+/**
+ * get class for hour slot
+ *
+ * @param int $reserved_space
+ * @param bool $red
+ * @param int $next_ending
+ * @param bool $subject
+ * @param int $extra_slots
+ * @return string
+ */
+function get_class_for_hour_slot($reserved_space, &$red, $next_ending, $subject = false, $extra_slots = false)
+{
+  static $last_red = false;
+
+  $red = ($red && $reserved_space >= 0);
+
+  $class = ($reserved_space >= 0 || $subject) ? (($reserved_space > 0) ? 'subject_continues' : 'subject') : 'subject empty';
+
+  $class .= $red ? ' red' : '';
+
+  $class .= ($red && $next_ending == 0 && $reserved_space > 0) ? ' dashed' : '';
+
+  $class .= ($last_red && $red && $extra_slots !== false) ? ' dashed_top' : '';
+
+  $last_red = $red;
+
+  return $class;
 }
 
 /**

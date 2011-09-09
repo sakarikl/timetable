@@ -59,11 +59,11 @@
 }
 
 .subject, .subject_continues{
-  font-size: 10px;
+  font-size: 10px;  
 }
 
 .subject_continues {
-  height: 25px;
+  height: 25px;  
 }
 
 .empty {
@@ -71,9 +71,21 @@
 }
 
 .red {
-  color: red;
+  color: red;  
+  border-right: 3px solid red;
+  border-left: 3px solid red;
+}
+
+.dashed {
+  border-bottom: 1px dashed;
+  height: 24px;
+}
+
+.dashed_top {
+  border-top: 1px dashed green;
+  height: 24px;
 }
 
 .second {
-
+  
 }
