@@ -28,11 +28,6 @@
   width:50%;
 }
 
-.day, .times {
-  border-right: 1px solid black;
-}
-
-
 .day {
   float: left;
   width: 19%;
@@ -42,24 +37,35 @@
   padding-left: 20px;
   font-weight: bold;
   border-bottom: 1px solid black;
+  border-right: 1px solid black;  
+}
+
+.first {
+  border-left: 1px solid black;
 }
 
 .times {
   float: left;
   width: 4%;
-  text-align: center;
-  border-left: 1px solid black;
+  text-align: center;  
+}
+
+.times_hour {  
+  border-left:1px solid black;
+  border-right: 1px solid black;
 }
 
 .times_hour, .subject{
   height: 24px;
+  border-right:1px solid black;
 }
 .times_hour, .subject {
   border-bottom: 1px solid black;
 }
 
 .subject, .subject_continues{
-  font-size: 10px;  
+  font-size: 10px;
+  border-right:1px solid black;
 }
 
 .subject_continues {

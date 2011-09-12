@@ -41,26 +41,30 @@ foreach ($data as $line)
     continue;
   }
 
-  $lectures[$year][$week][$day][$times[4]][$times[5]][$subject] = array('h' => $times[7],
-                                                                        'm' => $times[8],
-                                                                        'info' => $times[9],
-                                                                        'start' => $start,
-                                                                        'end' => $end,
-                                                                        'length' => $length,
+  $lectures[$year][$week][$day][$times[4]][$times[5]][$subject] = array('start_h' => $times[4],
+                                                                        'start_m' => $times[5],
+  																																			'end_h'   => $times[7],
+                                                                        'end_m'   => $times[8],
+                                                                        'info'	  => $times[9],
+                                                                        'start'   => $start,
+                                                                        'end'     => $end,
+                                                                        'length'  => $length,
                                                                         );
 }
 
 $hours_range = range(8,20);
-
-$times_div = '<div class="times"><div class="day_title">&nbsp;</div>';
-foreach ($hours_range as $hour) $times_div .= '<div class="times_hour">'.$hour.'</div>';
-$times_div .= '</div>';
 
 foreach ($lectures as $year => $weeks)
 {
   for ($week=1; $week<54; $week++)
   {
     if (!isset($weeks[$week])) continue;
+
+    $max_hours = get_max_hour($weeks[$week]);
+
+    $times_div = '<div class="times"><div class="day_title first">&nbsp;</div>';
+    foreach (range(8,$max_hours) as $hour) $times_div .= '<div class="times_hour">'.$hour.'</div>';
+    $times_div .= '</div>';
 
     $week_dates = $l->getWeekDates($week, $year);
     echo "\n".'<div id="year_'.$year.'_'.$week.'" class="week"><div class="week_header"><div class="week_header_content">'.$year.' '.$l->week.' <strong>'.$week.'</strong> '.$week_dates[1].' - '.$week_dates[7].'</div></div>'.$times_div;
@@ -72,6 +76,7 @@ foreach ($lectures as $year => $weeks)
       $red = false;
       foreach ($hours_range as $hour)
       {
+        if ($hour > $max_hours) continue;
         if (!isset($weeks[$week][$day][$hour]))
         {
           $extra_slots--;
@@ -125,7 +130,7 @@ foreach ($lectures as $year => $weeks)
               $next_ending = --$tmp_next_ending;
               $reserved_space = --$tmp_reserved_space;
             }
-            echo $hour.'.'.$minute.' - '.$item['h'].'.'.$item['m'].' '.$subject.'<br /><strong>'.$item['info'].'</strong><br />';
+            echo $hour.'.'.$minute.' - '.$item['end_h'].'.'.$item['end_m'].' '.$subject.'<br /><strong>'.$item['info'].'</strong><br />';
             $count++;
           }
         }
