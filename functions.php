@@ -51,7 +51,8 @@ function get_max_hour($week)
 
         foreach ($subjects as $item)
         {
-          if ($item['end_h'] > $max) $max = $item['end_h'];
+          if ($item['end_h'] > $max && $item['end_m'] != '00') $max = $item['end_h'];
+          if ($item['end_h'] > $max && $item['end_m'] == '00') $max = $item['end_h']-1;
         }
       }
     }
