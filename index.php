@@ -35,7 +35,7 @@ foreach ($data as $line)
   $day    = (int)date('w', $start);
   $length = $end-$start;
 
-  if (!$start)
+  if (!$times[2] || !$start || !$end || !$week || !$year || !$length)
   {
     echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
     continue;
@@ -53,7 +53,8 @@ foreach ($data as $line)
 }
 
 $hours_range = range(8,20);
-
+$week_counter = $page_hours = 0;
+$no_break = true;
 foreach ($lectures as $year => $weeks)
 {
   for ($week=1; $week<54; $week++)
@@ -61,6 +62,7 @@ foreach ($lectures as $year => $weeks)
     if (!isset($weeks[$week])) continue;
 
     $max_hours = get_max_hour($weeks[$week]);
+    echo_page_break($week_counter, $max_hours, $page_hours, $no_break);
 
     $times_div = '<div class="times"><div class="day_title first">&nbsp;</div>';
     foreach (range(8,$max_hours) as $hour) $times_div .= '<div class="times_hour">'.$hour.'</div>';

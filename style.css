@@ -1,12 +1,13 @@
 @CHARSET "UTF-8";
-@PAGE landscape {size: landscape;}
 
 .week {
-  width:100%;  
+  width:100%;
   border: 0;
-  page-break-after: always;
-  page: landscape;
   margin-top: 30px;
+}
+
+.page_break {
+  page-break-before: always;
 }
 
 .week_header {
@@ -33,7 +34,7 @@
   padding-left: 20px;
   font-weight: bold;
   border-bottom: 1px solid black;
-  border-right: 1px solid black;  
+  border-right: 1px solid black;
 }
 
 .first {
@@ -43,10 +44,10 @@
 .times {
   float: left;
   width: 4%;
-  text-align: center;  
+  text-align: center;
 }
 
-.times_hour {  
+.times_hour {
   border-left:1px solid black;
   border-right: 1px solid black;
 }
@@ -65,7 +66,7 @@
 }
 
 .subject_continues {
-  height: 25px;  
+  height: 25px;
 }
 
 .empty {
@@ -73,7 +74,7 @@
 }
 
 .red {
-  color: red;  
+  color: red;
   border-right: 3px solid red;
   border-left: 3px solid red;
 }
@@ -89,5 +90,5 @@
 }
 
 .second {
-  
+
 }

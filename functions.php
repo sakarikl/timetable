@@ -57,11 +57,39 @@ function get_max_hour($week)
       }
     }
   }
-
   return $max;
 }
 
+/**
+ * echo page break if needed
+ *
+ * @param int $week_counter
+ * @param int $max_hours
+ * @param int $page_hours
+ * @param bool $no_break
+ */
+function echo_page_break(&$week_counter, $max_hours, &$page_hours, &$no_break)
+{
+  $page_hours += $max_hours;
 
+  if ($page_hours > 48)
+  {
+    echo '<span  class="page_break "/>';
+    $week_counter =  1;
+    $page_hours = $max_hours;
+  }
+  else if ($week_counter++%3 === 0 && !$no_break)
+  {
+    echo '<span  class="page_break "/>';
+    $page_hours = $max_hours;
+  }
+  else $no_break = false;
+}
+
+/**
+ * echo html header
+ *
+ */
 function echo_header()
 {
   echo <<<END
@@ -72,9 +100,12 @@ function echo_header()
 </head>
 <body>
 END;
-
 }
 
+/**
+ * Echo html footer
+ *
+ */
 function echo_footer()
 {
   echo <<<END
