@@ -2,7 +2,7 @@
 
 require 'header.php';
 
-$file = utf8_encode(file_get_contents(dirname(__FILE__).'/../data.txt'));
+$file = file_get_contents(dirname(__FILE__).'/../data.txt');
 
 $ok_message = '';
 
