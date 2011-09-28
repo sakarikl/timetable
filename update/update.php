@@ -4,7 +4,7 @@ require 'header.php';
 if (isset($_REQUEST['content']) && $_REQUEST['content'])
 {
   file_put_contents($backup, file_get_contents($file));
-  file_put_contents($file, $_REQUEST['content']);
+  file_put_contents($file, utf8_decode($_REQUEST['content']));
 
   header('Location: index.php?ok=1');
   exit;
