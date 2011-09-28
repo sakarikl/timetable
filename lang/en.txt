@@ -12,3 +12,17 @@ sunday_short = 'Sun'
 wrong_input_line = 'INPUT LINE INCORRECT'
 
 date_format = 'n/j'
+
+#use only letters a-z + A-Z + space (firefox)
+auth_realm = 'Update timetable'
+
+auth_cancel = 'You need password to be able to update timetables'
+auth_wrong_credentials = 'Username / password was wrong'
+
+submit = 'Save'
+revert = 'Undo'
+error_save = 'Save failed'
+ok_save = 'Save succeeded'
+ok_revert = 'Previous save fetched'
+
+confirm_undo = 'Are you sure you want to undo last save?';

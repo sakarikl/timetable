@@ -12,3 +12,17 @@ sunday_short = 'Pe'
 wrong_input_line = 'VIRHEELINEN RIVI'
 
 date_format = 'j.n'
+
+#use only letters a-z + A-Z + space (firefox)
+auth_realm = 'Aikataulun muokkaus'
+
+auth_cancel = 'Aikataulujen p‰ivitys vaatii salasanan'
+auth_wrong_credentials = 'K‰ytt‰j‰tunnus / salasana v‰‰rin'
+
+submit = 'Tallenna'
+revert = 'Kumoa'
+error_save = 'Tallennus ep‰onnistui'
+ok_save = 'Tallennus onnistui'
+ok_revert = 'Edellisen tallennuksen haku onnistui'
+
+confirm_undo = 'Haluatko varmasti kumota edellisen tallennuksen';

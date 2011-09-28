@@ -87,16 +87,73 @@ function echo_page_break(&$week_counter, $max_hours, &$page_hours, &$no_break)
 }
 
 /**
- * echo html header
+ * Authenticate user using http digest authentication
+ * (http://php.net/manual/en/features.http-auth.php)
  *
  */
-function echo_header()
+function authenticate()
+{
+  global $valid_users, $l;
+
+  if (empty($_SERVER['PHP_AUTH_DIGEST']))
+  {
+      header('HTTP/1.1 401 Unauthorized');
+      header('WWW-Authenticate: Digest realm="'.$l->auth_realm.
+             '",qop="auth",nonce="'.uniqid().'",opaque="'.md5($l->auth_realm).'"');
+
+      die($l->auth_cancel);
+  }
+
+  if (!($data = http_digest_parse($_SERVER['PHP_AUTH_DIGEST'])) || !isset($valid_users[$data['username']])) die($l->auth_wrong_credentials);
+
+  // generate the valid response
+  $A1 = md5($data['username'] . ':' . $l->auth_realm . ':' . $valid_users[$data['username']]);
+  $A2 = md5($_SERVER['REQUEST_METHOD'].':'.$data['uri']);
+  $valid_response = md5($A1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$A2);
+
+  if ($data['response'] != $valid_response) die($l->auth_wrong_credentials);
+
+  // ok, valid username & password
+}
+
+/**
+ * parse http basic authentication
+ * (http://php.net/manual/en/features.http-auth.php)
+ *
+ * @param string $txt
+ * @return array
+ */
+function http_digest_parse($txt)
+{
+  // protect against missing data
+  $needed_parts = array('nonce'=>1, 'nc'=>1, 'cnonce'=>1, 'qop'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
+  $data = array();
+  $keys = implode('|', array_keys($needed_parts));
+
+  preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);
+
+  foreach ($matches as $m)
+  {
+    $data[$m[1]] = $m[3] ? $m[3] : $m[4];
+    unset($needed_parts[$m[1]]);
+  }
+
+  return $needed_parts ? false : $data;
+}
+
+
+/**
+ * echo html header
+ *
+ * @param string $file_prefix
+ */
+function echo_header($file_prefix = '')
 {
   echo <<<END
 <html>
 <head>
 <title>Timetable</title>
-<link href="style.css" rel="stylesheet" type="text/css">
+<link href="{$file_prefix}style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 END;
