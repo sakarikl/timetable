@@ -26,3 +26,6 @@ ok_save = 'Tallennus onnistui'
 ok_revert = 'Edellisen tallennuksen haku onnistui'
 
 confirm_undo = 'Haluatko varmasti kumota edellisen tallennuksen';
+
+show_old_items = 'Näytä vanhat lukujärjestykset';
+show_new_items = 'Näytä ainoastaan uudet lukujärjestykset';

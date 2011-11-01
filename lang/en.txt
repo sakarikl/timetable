@@ -26,3 +26,6 @@ ok_save = 'Save succeeded'
 ok_revert = 'Previous save fetched'
 
 confirm_undo = 'Are you sure you want to undo last save?';
+
+show_old_items = 'Show old timetables';
+show_new_items = 'Show only new timetables';

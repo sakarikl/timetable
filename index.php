@@ -10,6 +10,9 @@ $subject = '';
 $lectures = array();
 $last_was_subject = false;
 
+$old_items = (isset($_REQUEST['old']) && $_REQUEST['old']);
+$current_time = time();
+
 foreach ($data as $line)
 {
   $line = trim($line);
@@ -41,6 +44,8 @@ foreach ($data as $line)
     continue;
   }
 
+  if (!$old_items && $current_time > $end) continue;
+
   $lectures[$year][$week][$day][$times[4]][$times[5]][$subject] = array('start_h' => $times[4],
                                                                         'start_m' => $times[5],
   																																			'end_h'   => $times[7],
@@ -51,6 +56,9 @@ foreach ($data as $line)
                                                                         'length'  => $length,
                                                                         );
 }
+
+if ($old_items) echo "<a href='?old=0'>$l->show_new_items</a><br>";
+else echo "<a href='?old=1'>$l->show_old_items</a><br>";
 
 $hours_range = range(8,20);
 $week_counter = $page_hours = 0;
