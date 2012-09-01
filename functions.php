@@ -13,8 +13,9 @@
 function get_class_for_hour_slot($reserved_space, &$red, $next_ending, $subject = false, $extra_slots = false)
 {
   static $last_red = false;
+  static $last_red2 = false;
 
-  $red = ($red && $reserved_space >= 0);
+  $red = (($red || ($last_red2 && $reserved_space > 0 )) && $reserved_space >= 0);
 
   $class = ($reserved_space >= 0 || $subject) ? (($reserved_space > 0) ? 'subject_continues' : 'subject') : 'subject empty';
 
@@ -24,7 +25,13 @@ function get_class_for_hour_slot($reserved_space, &$red, $next_ending, $subject 
 
   $class .= ($last_red && $red && $extra_slots !== false) ? ' dashed_top' : '';
 
-  $last_red = $red;
+  $last_red2 = $last_red = $red;
+
+  if ($reserved_space <= 0) $last_red2 = false;
+
+  //echo $reserved_space.' '.$next_ending;
+
+  //echo $class;
 
   return $class;
 }

@@ -23,7 +23,7 @@ foreach ($data as $line)
     if (preg_match($regexp, $line)) continue 2;
   }
 
-  if (!preg_match('{([^0-9\.]*)([0-9\.]*).*?(([0-9]+)\.([0-9]+))-(([0-9]+)\.([0-9]+))(.*)}', $line, $times))
+  if (!preg_match('{([^0-9\.]*)([0-9\.]*).*?(([0-9]+)(\.([0-9]+))?)-(([0-9]+)(\.([0-9]+))?)(.*)}', $line, $times))
   {
     $subject = $last_was_subject ? $subject.' '.$line : $line;
     $last_was_subject = true;
@@ -31,8 +31,11 @@ foreach ($data as $line)
   }
   $last_was_subject = false;
 
-  $start  = strtotime($times[2].' '.$times[4].':'.$times[5]);
-  $end    = strtotime($times[2].' '.$times[7].':'.$times[8]);
+  if (!strlen($times[6])) $times[6] = '00';
+  if (!strlen($times[10])) $times[10] = '00';
+
+  $start  = strtotime($times[2].' '.$times[4].':'.$times[6]);
+  $end    = strtotime($times[2].' '.$times[8].':'.$times[10]);
   $year   = (int)date('Y', $start);
   $week   = (int)date('W', $start);
   $day    = (int)date('w', $start);
@@ -46,11 +49,11 @@ foreach ($data as $line)
 
   if (!$old_items && $current_time > $end) continue;
 
-  $lectures[$year][$week][$day][$times[4]][$times[5]][$subject] = array('start_h' => $times[4],
-                                                                        'start_m' => $times[5],
-  																																			'end_h'   => $times[7],
-                                                                        'end_m'   => $times[8],
-                                                                        'info'	  => $times[9],
+  $lectures[$year][$week][$day][$times[4]][$times[6]][$subject] = array('start_h' => $times[4],
+                                                                        'start_m' => $times[6],
+  																																			'end_h'   => $times[8],
+                                                                        'end_m'   => $times[10],
+                                                                        'info'	  => $times[11],
                                                                         'start'   => $start,
                                                                         'end'     => $end,
                                                                         'length'  => $length,
@@ -104,7 +107,9 @@ foreach ($lectures as $year => $weeks)
             if (!$count)
             {
               //counts needed space for item
-              $extra_slots = (int)floor($item['length']/3601);
+              $extra_slots = $item['end_h']-$item['start_h'];
+              if ($item['end_m'] == '00') $extra_slots--;
+
               $reserved_space = max($extra_slots, $reserved_space);
               $next_ending = min($extra_slots, $reserved_space);
 
@@ -112,12 +117,12 @@ foreach ($lectures as $year => $weeks)
 
               if (!$red)
               {
-                for ($i=1; $i<$extra_slots; $i++)
+                for ($i=1; $i<=$extra_slots; $i++)
                 {
                   if (isset($weeks[$week][$day][$hour+$i]))
                   {
                     $red = true;
-                    continue;
+                    break;
                   }
                 }
               }
@@ -128,7 +133,9 @@ foreach ($lectures as $year => $weeks)
               // more than one item starting at the same time (tested only with two concurrent items)
               //calculations must be done again
 
-              $tmp = (int)floor($item['length']/3601);
+              //$tmp = (int)floor($item['length']/3601);
+              $tmp = $item['end_h']-$item['start_h'];
+              if ($item['end_m'] == '00') $tmp--;
 
               //+1 because previous loop used -- already
               $tmp_extra_slots = max($tmp, $extra_slots+1);
