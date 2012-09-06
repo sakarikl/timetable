@@ -1,6 +1,71 @@
 <?php
 
 /**
+ * convert timeframe array to normal time array
+ *
+ * @param timestamp $lecture_date
+ * @param array $timeframe_time
+ * @return array
+ */
+function build_times_array_from_timeframe($lecture_date, $timeframe_time)
+{
+  return array(0 => $timeframe_time[0],
+               1 => $timeframe_time[1],
+               2 => date('j.n.Y', $lecture_date),
+               3 => $timeframe_time[2],
+               4 => $timeframe_time[3],
+               5 => $timeframe_time[4],
+               6 => $timeframe_time[5],
+               7 => $timeframe_time[6],
+               8 => $timeframe_time[7],
+               9 => $timeframe_time[8],
+               10 => $timeframe_time[9],
+               11 => $timeframe_time[10]
+              );
+}
+
+/**
+ * insert time to lectures array
+ *
+ * @param array $lectures
+ * @param timestamp $current_time
+ * @param bool $old_items
+ * @param array $times
+ * @param string $subject
+ * @return boolean
+ */
+function insert_time(&$lectures, $current_time, $old_items, $times, $subject)
+{
+  if (!strlen($times[6])) $times[6] = '00';
+  if (!strlen($times[10])) $times[10] = '00';
+
+  $start  = strtotime($times[2].' '.$times[4].':'.$times[6]);
+  $end    = strtotime($times[2].' '.$times[8].':'.$times[10]);
+
+  $year   = (int)date('Y', $start);
+  $week   = (int)date('W', $start);
+  $day    = (int)date('w', $start);
+  $length = $end-$start;
+
+  if (!$start || !$end || !$week || !$year || !$length) return false;
+
+  if (!$old_items && $current_time > $end) return true;
+
+  $lectures[$year][$week][$day][$times[4]][$times[6]][$subject] = array('start_h' => $times[4],
+      'start_m' => $times[6],
+      'end_h'   => $times[8],
+      'end_m'   => $times[10],
+      'info'	  => $times[11],
+      'start'   => $start,
+      'end'     => $end,
+      'length'  => $length,
+  );
+
+  return true;
+}
+
+
+/**
  * get class for hour slot
  *
  * @param int $reserved_space

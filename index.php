@@ -9,9 +9,17 @@ $data = file('data.txt');
 $subject = '';
 $lectures = array();
 $last_was_subject = false;
+$timeframe_active = false;
 
 $old_items = (isset($_REQUEST['old']) && $_REQUEST['old']);
 $current_time = time();
+
+$week_days = array($l->monday_short => 1,
+                   $l->tuesday_short => 2,
+                   $l->wednesday_short => 3,
+                   $l->thursday_short => 4,
+                   $l->friday_short => 5,
+                  );
 
 foreach ($data as $line)
 {
@@ -23,41 +31,47 @@ foreach ($data as $line)
     if (preg_match($regexp, $line)) continue 2;
   }
 
-  if (!preg_match('{([^0-9\.]*)([0-9\.]*).*?(([0-9]+)(\.([0-9]+))?)-(([0-9]+)(\.([0-9]+))?)(.*)}', $line, $times))
+  if (preg_match('{^([0-9]+\.[0-9]+(\.[0-9]+)?)[ -]+([0-9]+\.[0-9]+(\.[0-9]+)?)$}', $line, $timeframe))
+  {
+    $timeframe_active = true;
+
+    if ($timeframe[2]) $timeframe_start = strtotime($timeframe[1]);
+    else $timeframe_start = strtotime($timeframe[1].'.'.date('Y'));
+
+    if ($timeframe[4]) $timeframe_end = strtotime($timeframe[3]);
+    else $timeframe_end = strtotime($timeframe[3].'.'.date('Y'));
+
+  }
+  else if ($timeframe_active && preg_match('{^([^0-9\.]*)(([0-9]+)(\.([0-9]+))?)-(([0-9]+)(\.([0-9]+))?)(.*)}', $line, $timeframe_time))
+  {
+    if (!$timeframe_time[1] || !$timeframe_time[3] || !$timeframe_time[7])
+    {
+      echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
+      continue;
+    }
+    $start_day = $week_days[trim($timeframe_time[1])];
+    $lecture_date = $timeframe_start + 86400*($start_day-date('N', $timeframe_start));
+
+    while ($lecture_date < $timeframe_end)
+    {
+      $times = build_times_array_from_timeframe($lecture_date, $timeframe_time);
+      insert_time($lectures, $current_time, $old_items, $times, $subject);
+
+      $lecture_date = strtotime(date('Y-m-d', $lecture_date).' + 1 week');
+    }
+  }
+  else if (preg_match('{([^0-9\.]*)([0-9\.]*).*?(([0-9]+)(\.([0-9]+))?)-(([0-9]+)(\.([0-9]+))?)(.*)}', $line, $times))
+  {
+    $last_was_subject = false;
+
+    if (!insert_time($lectures, $current_time, $old_items, $times, $subject)) echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
+  }
+  else
   {
     $subject = $last_was_subject ? $subject.' '.$line : $line;
     $last_was_subject = true;
-    continue;
+    $timeframe_active = false;
   }
-  $last_was_subject = false;
-
-  if (!strlen($times[6])) $times[6] = '00';
-  if (!strlen($times[10])) $times[10] = '00';
-
-  $start  = strtotime($times[2].' '.$times[4].':'.$times[6]);
-  $end    = strtotime($times[2].' '.$times[8].':'.$times[10]);
-  $year   = (int)date('Y', $start);
-  $week   = (int)date('W', $start);
-  $day    = (int)date('w', $start);
-  $length = $end-$start;
-
-  if (!$times[2] || !$start || !$end || !$week || !$year || !$length)
-  {
-    echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
-    continue;
-  }
-
-  if (!$old_items && $current_time > $end) continue;
-
-  $lectures[$year][$week][$day][$times[4]][$times[6]][$subject] = array('start_h' => $times[4],
-                                                                        'start_m' => $times[6],
-  																																			'end_h'   => $times[8],
-                                                                        'end_m'   => $times[10],
-                                                                        'info'	  => $times[11],
-                                                                        'start'   => $start,
-                                                                        'end'     => $end,
-                                                                        'length'  => $length,
-                                                                        );
 }
 
 if ($old_items) echo "<a href='?old=0'>$l->show_new_items</a><br>";
