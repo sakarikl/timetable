@@ -40,16 +40,17 @@ foreach ($data as $line)
 
     if ($timeframe[4]) $timeframe_end = strtotime($timeframe[3]);
     else $timeframe_end = strtotime($timeframe[3].'.'.date('Y'));
-
   }
   else if ($timeframe_active && preg_match('{^([^0-9\.]*)(([0-9]+)(\.([0-9]+))?)-(([0-9]+)(\.([0-9]+))?)(.*)}', $line, $timeframe_time))
   {
-    if (!$timeframe_time[1] || !$timeframe_time[3] || !$timeframe_time[7])
+    $day = trim($timeframe_time[1]);
+    if (!$timeframe_time[1] || !$timeframe_time[3] || !$timeframe_time[7] || !isset($week_days[$day]))
     {
       echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
       continue;
     }
-    $start_day = $week_days[trim($timeframe_time[1])];
+    
+    $start_day = $week_days[$day];
     $lecture_date = $timeframe_start + 86400*($start_day-date('N', $timeframe_start));
 
     while ($lecture_date < $timeframe_end)
