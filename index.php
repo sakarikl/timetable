@@ -128,7 +128,11 @@ foreach ($lectures as $year => $weeks)
               $reserved_space = max($extra_slots, $reserved_space);
               $next_ending = min($extra_slots, $reserved_space);
 
-              if (count($weeks[$week][$day][$hour]) > 1) $red = true;
+              if (count($weeks[$week][$day][$hour]) > 1)
+              {
+                if (items_in_hour_array_overlap($weeks[$week][$day][$hour], $item, $subject)) $red = true;
+              }
+
 
               if (!$red)
               {
@@ -136,8 +140,11 @@ foreach ($lectures as $year => $weeks)
                 {
                   if (isset($weeks[$week][$day][$hour+$i]))
                   {
-                    $red = true;
-                    break;
+                    if (items_in_hour_array_overlap($weeks[$week][$day][$hour+$i], $item, $subject))
+                    {
+                      $red = true;
+                      break;
+                    }
                   }
                 }
               }

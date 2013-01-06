@@ -64,6 +64,45 @@ function insert_time(&$lectures, $current_time, $old_items, $times, $subject)
   return true;
 }
 
+/**
+ * Check if $hour array has overlapping times with $item
+ *
+ * @param array $hour
+ * @param array $item
+ * @param string $subject
+ * @return bool
+ */
+function items_in_hour_array_overlap($hour, $item, $subject)
+{
+
+  foreach ($hour as $mu_h_minute => $mu_h_subjects)
+  {
+    foreach ($mu_h_subjects as $mu_h_subject => $mu_h_item)
+    {
+      if ($mu_h_subject == $subject) continue;
+
+      if (items_overlap($item, $mu_h_item)) return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * check if items overlap
+ *
+ * @param array $item1
+ * @param array $item2
+ * @return bool
+ */
+function items_overlap($item1, $item2)
+{
+  if ($item1['start'] < $item2['start'] && $item2['start'] < $item1['end']) return true;
+  if ($item1['start'] < $item2['end'] && $item2['end'] < $item1['end']) return true;
+
+  return false;
+}
+
 
 /**
  * get class for hour slot
