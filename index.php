@@ -130,7 +130,7 @@ foreach ($lectures as $year => $weeks)
 
               if (count($weeks[$week][$day][$hour]) > 1)
               {
-                if (items_in_hour_array_overlap($weeks[$week][$day][$hour], $item, $subject)) $red = true;
+                if (items_in_hour_array_overlap($weeks[$week][$day][$hour], $item)) $red = true;
               }
 
 
@@ -140,7 +140,7 @@ foreach ($lectures as $year => $weeks)
                 {
                   if (isset($weeks[$week][$day][$hour+$i]))
                   {
-                    if (items_in_hour_array_overlap($weeks[$week][$day][$hour+$i], $item, $subject))
+                    if (items_in_hour_array_overlap($weeks[$week][$day][$hour+$i], $item))
                     {
                       $red = true;
                       break;

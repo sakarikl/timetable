@@ -69,17 +69,16 @@ function insert_time(&$lectures, $current_time, $old_items, $times, $subject)
  *
  * @param array $hour
  * @param array $item
- * @param string $subject
  * @return bool
  */
-function items_in_hour_array_overlap($hour, $item, $subject)
+function items_in_hour_array_overlap($hour, $item)
 {
 
   foreach ($hour as $mu_h_minute => $mu_h_subjects)
   {
     foreach ($mu_h_subjects as $mu_h_subject => $mu_h_item)
     {
-      if ($mu_h_subject == $subject) continue;
+      if ($mu_h_item == $item) continue;
 
       if (items_overlap($item, $mu_h_item)) return true;
     }
