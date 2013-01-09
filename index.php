@@ -46,7 +46,7 @@ foreach ($data as $line)
     $day = trim($timeframe_time[1]);
     if (!$timeframe_time[1] || !$timeframe_time[3] || !$timeframe_time[7] || !isset($week_days[$day]))
     {
-      echo '<b>'.$l->wrong_input_line.': '.$times[0].'</b><br />';
+      echo '<b>'.$l->wrong_input_line.': '.$timeframe_time[0].'</b><br />';
       continue;
     }
     
