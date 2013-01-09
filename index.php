@@ -113,6 +113,8 @@ foreach ($lectures as $year => $weeks)
         }
         $count = 0;
 
+        ksort($weeks[$week][$day][$hour]);
+
         foreach ($weeks[$week][$day][$hour] as $minute => $subjects)
         {
           $red = (count($subjects) > 1 || $reserved_space > 0);
