@@ -14,11 +14,11 @@ $timeframe_active = false;
 $old_items = (isset($_REQUEST['old']) && $_REQUEST['old']);
 $current_time = time();
 
-$week_days = array($l->monday_short => 1,
-                   $l->tuesday_short => 2,
-                   $l->wednesday_short => 3,
-                   $l->thursday_short => 4,
-                   $l->friday_short => 5,
+$week_days = array(strtolower($l->monday_short) => 1,
+                   strtolower($l->tuesday_short) => 2,
+                   strtolower($l->wednesday_short) => 3,
+                   strtolower($l->thursday_short) => 4,
+                   strtolower($l->friday_short) => 5,
                   );
 
 foreach ($data as $line)
@@ -43,7 +43,7 @@ foreach ($data as $line)
   }
   else if ($timeframe_active && preg_match('{^([^0-9\.]*)(([0-9]+)(\.([0-9]+))?)-(([0-9]+)(\.([0-9]+))?)(.*)}', $line, $timeframe_time))
   {
-    $day = trim($timeframe_time[1]);
+    $day = strtolower(trim($timeframe_time[1]));
     if (!$timeframe_time[1] || !$timeframe_time[3] || !$timeframe_time[7] || !isset($week_days[$day]))
     {
       echo '<b>'.$l->wrong_input_line.': '.$timeframe_time[0].'</b><br />';
