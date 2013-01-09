@@ -97,7 +97,7 @@ function items_in_hour_array_overlap($hour, $item)
 function items_overlap($item1, $item2)
 {
   if ($item1['start'] < $item2['start'] && $item2['start'] < $item1['end']) return true;
-  if ($item1['start'] < $item2['end'] && $item2['end'] < $item1['end']) return true;
+  if ($item2['start'] < $item1['start'] && $item1['start'] < $item2['end']) return true;
 
   return false;
 }
