@@ -130,26 +130,9 @@ foreach ($lectures as $year => $weeks)
               $reserved_space = max($extra_slots, $reserved_space);
               $next_ending = min($extra_slots, $reserved_space);
 
-              if (count($weeks[$week][$day][$hour]) > 1)
-              {
-                if (items_in_hour_array_overlap($weeks[$week][$day][$hour], $item)) $red = true;
-              }
+              if (count($weeks[$week][$day][$hour]) > 1 && items_in_hour_array_overlap($weeks[$week][$day][$hour], $item)) $red = true;
+              if (!$red && items_in_day_array_overlap($weeks[$week][$day], $item)) $red = true;
 
-
-              if (!$red)
-              {
-                for ($i=1; $i<=$extra_slots; $i++)
-                {
-                  if (isset($weeks[$week][$day][$hour+$i]))
-                  {
-                    if (items_in_hour_array_overlap($weeks[$week][$day][$hour+$i], $item))
-                    {
-                      $red = true;
-                      break;
-                    }
-                  }
-                }
-              }
               echo "\n".'<div class="'.get_class_for_hour_slot($reserved_space--, $red, $next_ending--, true, $extra_slots--).'">';
             }
             else
