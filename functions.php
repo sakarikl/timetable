@@ -65,6 +65,22 @@ function insert_time(&$lectures, $current_time, $old_items, $times, $subject)
 }
 
 /**
+ * Check if $day array has overlapping items with $item
+ *
+ * @param array $day
+ * @param array $item
+ * @return bool
+ */
+function items_in_day_array_overlap($day, $item)
+{
+  foreach ($day as $hour)
+  {
+    if (items_in_hour_array_overlap($hour, $item)) return true;
+  }
+  return false;
+}
+
+/**
  * Check if $hour array has overlapping times with $item
  *
  * @param array $hour
